@@ -16,32 +16,62 @@ chai.use(chaiHttp);
 suite('Functional Tests', function() {
 
   suite('GET /api/stock-prices => stockData object', function() {
-
+    let likeCount = 0;
     test('1 stock', function(done) {
       const stock = 'goog';
       chai.request(server)
         .get('/api/stock-prices')
-        .query({stock: stock})
+        .query({stock})
         .end(function(err, res) {
           if (err) console.log(err.text);
-          assert.property(res.body, 'stock');
-          assert.property(res.body, 'likes');
-          assert.property(res.body, 'price');
-          assert.equal(res.body.stock, stock)
-          assert.isAtLeast(res.body.likes, 0);
-          assert.isAtLeast(res.body.price, 0);
+          assert.property(res.body, 'stockdata');
+          assert.property(res.body.stockdata, 'stock');
+          assert.property(res.body.stockdata, 'likes');
+          assert.property(res.body.stockdata, 'price');
+          assert.equal(res.body.stockdata.stock, stock)
+          assert.isAtLeast(res.body.stockdata.likes, 0);
+          likeCount = res.body.stockdata.likes
+          assert.isAtLeast(res.body.stockdata.price, 0);
           done();
         });
     });
 
-    test.skip('1 stock with like', function(done) {
-      assert.fail();
+    test('1 stock with like', function(done) {
+      const stock = 'goog';
+      chai.request(server)
+        .get('/api/stock-prices')
+        .query({stock, like: true})
+        .end(function(err, res) {
+          if (err) console.log(err.text);
+          assert.property(res.body, 'stockdata');
+          assert.property(res.body.stockdata, 'stock');
+          assert.property(res.body.stockdata, 'likes');
+          assert.property(res.body.stockdata, 'price');
+          assert.equal(res.body.stockdata.stock, stock)
+          assert.isAtLeast(res.body.stockdata.likes, likeCount);
+          likeCount = res.body.stockdata.likes
+          assert.isAtLeast(res.body.stockdata.price, 0);
       done();
+        })
     });
 
-    test.skip('1 stock with like again (ensure likes arent double counted)', function(done) {
-      assert.fail();
-      done();
+    test("1 stock with like again (ensure likes aren't double counted)", function(done) {
+      const stock = 'goog';
+      chai.request(server)
+        .get('/api/stock-prices')
+        .query({stock, like: true})
+        .end(function(err, res) {
+          if (err) console.log(err.text);
+          assert.property(res.body, 'stockdata');
+          assert.property(res.body.stockdata, 'stock');
+          assert.property(res.body.stockdata, 'likes');
+          assert.property(res.body.stockdata, 'price');
+          assert.equal(res.body.stockdata.stock, stock)
+          assert.isAtLeast(res.body.stockdata.likes, likeCount);
+          likeCount = res.body.stockdata.likes
+          assert.isAtLeast(res.body.stockdata.price, 0);
+          done()
+        });
     });
 
     test.skip('2 stocks', function(done) {

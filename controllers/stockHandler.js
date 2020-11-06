@@ -20,14 +20,22 @@ const Stocks = mongoose.model('stock', {
 
 module.exports = function() {
 
-  this.getStock = async (stock) => {
-    const fetched = await (await fetch(StockURL(stock))).json();
+  this.getStock = async (req) => {
+    const fetched = await (await fetch(StockURL(req.stock))).json();
+    const update = {$set: {price: fetched.latestPrice}};
+    if (req.like) update['$addToSet'] = {likes: req.ip}
     const res = await Stocks.findOneAndUpdate(
-      {symbol: stock},
-      {$set: {price: fetched.latestPrice}},
+      {symbol: req.stock},
+      update,
       {new: true, upsert: true, },
       (_, data) => data)
-
-    return {stock: res.symbol, likes: res.likes.length, price: res.price};
+    return {
+      stockdata: {
+        stock: res.symbol,
+        likes: res.likes.length,
+        price: res.price
+      },
+      data: res
+    };
   }
 }
