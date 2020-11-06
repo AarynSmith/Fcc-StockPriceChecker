@@ -14,37 +14,46 @@ var server = require('../server');
 chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
-    
-    suite('GET /api/stock-prices => stockData object', function() {
-      
-      test('1 stock', function(done) {
-       chai.request(server)
+
+  suite('GET /api/stock-prices => stockData object', function() {
+
+    test('1 stock', function(done) {
+      const stock = 'goog';
+      chai.request(server)
         .get('/api/stock-prices')
-        .query({stock: 'goog'})
-        .end(function(err, res){
-          
-          //complete this one too
-          
+        .query({stock: stock})
+        .end(function(err, res) {
+          if (err) console.log(err.text);
+          assert.property(res.body, 'stock');
+          assert.property(res.body, 'likes');
+          assert.property(res.body, 'price');
+          assert.equal(res.body.stock, stock)
+          assert.isAtLeast(res.body.likes, 0);
+          assert.isAtLeast(res.body.price, 0);
           done();
         });
-      });
-      
-      test('1 stock with like', function(done) {
-        
-      });
-      
-      test('1 stock with like again (ensure likes arent double counted)', function(done) {
-        
-      });
-      
-      test('2 stocks', function(done) {
-        
-      });
-      
-      test('2 stocks with like', function(done) {
-        
-      });
-      
     });
+
+    test.skip('1 stock with like', function(done) {
+      assert.fail();
+      done();
+    });
+
+    test.skip('1 stock with like again (ensure likes arent double counted)', function(done) {
+      assert.fail();
+      done();
+    });
+
+    test.skip('2 stocks', function(done) {
+      assert.fail();
+      done();
+    });
+
+    test.skip('2 stocks with like', function(done) {
+      assert.fail();
+      done();
+    });
+
+  });
 
 });

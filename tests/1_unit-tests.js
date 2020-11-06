@@ -11,8 +11,8 @@ var StockHandler = require('../controllers/stockHandler.js');
 
 var stockPrices = new StockHandler();
 
-suite('Unit Tests', function(){
+suite('Unit Tests', function() {
 
-//none requiered
+  //none required
 
 });
