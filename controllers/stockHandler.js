@@ -24,18 +24,10 @@ module.exports = function() {
     const fetched = await (await fetch(StockURL(req.stock))).json();
     const update = {$set: {price: fetched.latestPrice}};
     if (req.like) update['$addToSet'] = {likes: req.ip}
-    const res = await Stocks.findOneAndUpdate(
+    return await Stocks.findOneAndUpdate(
       {symbol: req.stock},
       update,
       {new: true, upsert: true, },
       (_, data) => data)
-    return {
-      stockdata: {
-        stock: res.symbol,
-        likes: res.likes.length,
-        price: res.price
-      },
-      data: res
-    };
   }
 }
